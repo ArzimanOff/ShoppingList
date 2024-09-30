@@ -20,6 +20,7 @@
         android:padding="16dp">
 
         <TextView
+            android:id="@+id/tvName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
@@ -31,6 +32,7 @@
             tools:text="Туалетная бумага" />
 
         <TextView
+            android:id="@+id/tvCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
