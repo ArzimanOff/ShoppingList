@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
         const val LOG_TAG = "appNeedLogs"
     }
     private lateinit var viewModel: MainViewModel
-    private lateinit var adapter: ShopListAdapter
+    private lateinit var shopListAdapter: ShopListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,13 +23,23 @@ class MainActivity : AppCompatActivity() {
         setupRecyclerView()
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         viewModel.shopList.observe(this) {
-            adapter.shopList = it
+            shopListAdapter.shopList = it
         }
     }
 
     private fun setupRecyclerView(){
         val rvShopList = findViewById<RecyclerView>(R.id.rvShopList)
-        adapter = ShopListAdapter()
-        rvShopList.adapter = adapter
+        with(rvShopList){
+            shopListAdapter = ShopListAdapter()
+            adapter = shopListAdapter
+            recycledViewPool.setMaxRecycledViews(
+                ShopListAdapter.ITEM_SHOP_ENABLED,
+                ShopListAdapter.MAX_POOL_SIZE
+            )
+            recycledViewPool.setMaxRecycledViews(
+                ShopListAdapter.ITEM_SHOP_DISABLED,
+                ShopListAdapter.MAX_POOL_SIZE
+            )
+        }
     }
 }
