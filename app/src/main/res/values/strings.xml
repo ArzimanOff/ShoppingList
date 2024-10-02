@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">ShoppingList</string>
+    <string name="btnSaveShopItemText">Сохранить</string>
+    <string name="btnNewShopItemText">Добавить</string>
+    <string name="itemInfoInputTitleText">Введите \n желаемые данные:</string>
+    <string name="etNameHint">Название</string>
+    <string name="etCountHint">Количество</string>
 </resources>
