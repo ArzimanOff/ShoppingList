@@ -39,6 +39,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
+        android:background="@drawable/text_input_bg"
         >
 
         <com.google.android.material.textfield.TextInputEditText
@@ -47,10 +48,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/etNameHint"
             android:inputType="textCapWords"
-
-            android:background="@drawable/text_input_bg"
-
-            />
+            android:background="@android:color/transparent"/>
 
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
@@ -64,6 +62,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
+
+        android:background="@drawable/text_input_bg"
         >
 
         <com.google.android.material.textfield.TextInputEditText
@@ -72,9 +72,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/etCountHint"
             android:inputType="number"
-            android:textColorHint="@color/main_color"
-            android:background="@drawable/text_input_bg"
-            />
+            android:background="@android:color/transparent" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -110,6 +108,7 @@
         android:layout_height="60dp"
         android:layout_marginStart="16dp"
 
+        android:contentDescription="@string/btnDeleteItemDesc"
         android:src="@drawable/trash_icon"
         android:background="@drawable/btn_delete_bg"
         android:scaleType="centerInside"
@@ -119,7 +118,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/btnSaveShopItem"
         app:layout_constraintBottom_toBottomOf="@id/btnSaveShopItem"
-        android:visibility="gone"
+        android:visibility="visible"
         tools:visibility="visible"
         />
 

@@ -1,5 +1,6 @@
 package com.arziman_off.shoppinglist.presentation
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.arziman_off.shoppinglist.R
 import com.arziman_off.shoppinglist.domain.ShopItem
+import com.google.android.material.button.MaterialButton
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -19,16 +21,29 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var shopListAdapter: ShopListAdapter
+    private lateinit var btnNewShopItem: MaterialButton
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setupRecyclerView()
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        setupRecyclerView()
+        setupViewModelObservers()
+        btnNewShopItem = findViewById(R.id.btnNewShopItem)
+        btnNewShopItem.setOnClickListener {
+            val intent = ShopItemActivity.newIntentAddItem(this)
+            startActivity(intent)
+        }
+    }
+
+    private fun setupViewModelObservers() {
         viewModel.shopList.observe(this) {
             shopListAdapter.submitList(it)
         }
     }
+
+
 
     private fun setupRecyclerView() {
         val rvShopList = findViewById<RecyclerView>(R.id.rvShopList)
@@ -75,6 +90,8 @@ class MainActivity : AppCompatActivity() {
     private fun setupClickListener() {
         shopListAdapter.onShopItemClickListener = {
             Log.d(LOG_TAG, it.toString())
+            val intent = ShopItemActivity.newIntentEditItem(this, it.id)
+            startActivity(intent)
         }
     }
 

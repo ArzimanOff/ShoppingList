@@ -5,4 +5,5 @@
     <string name="itemInfoInputTitleText">Введите \n желаемые данные:</string>
     <string name="etNameHint">Название</string>
     <string name="etCountHint">Количество</string>
+    <string name="btnDeleteItemDesc">Кнопка для удаление записи</string>
 </resources>
