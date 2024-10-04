@@ -94,11 +94,11 @@ class ShopItemViewModel : ViewModel() {
         return res
     }
 
-    private fun resetErrorInputName() {
+    fun resetErrorInputName() {
         _errorInputName.value = false
     }
 
-    private fun resetErrorInputCount() {
+    fun resetErrorInputCount() {
         _errorInputCount.value = false
     }
 
