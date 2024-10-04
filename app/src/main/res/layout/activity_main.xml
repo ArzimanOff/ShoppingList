@@ -33,7 +33,7 @@
         android:layout_weight="1"
 
         android:backgroundTint="@color/main_color"
-        android:text="Добавить"
+        android:text="@string/btnNewShopItemText"
         android:textColor="@color/white"
         android:textSize="18sp"
 
