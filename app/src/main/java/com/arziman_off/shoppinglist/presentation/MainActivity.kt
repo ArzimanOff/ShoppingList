@@ -1,20 +1,18 @@
 package com.arziman_off.shoppinglist.presentation
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.enableEdgeToEdge
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.arziman_off.shoppinglist.R
-import com.arziman_off.shoppinglist.domain.ShopItem
 import com.google.android.material.button.MaterialButton
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
     companion object {
         const val LOG_TAG = "appNeedLogs"
     }
@@ -22,24 +20,52 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: MainViewModel
     private lateinit var shopListAdapter: ShopListAdapter
     private lateinit var btnNewShopItem: MaterialButton
+    private var shopItemContainer: FragmentContainerView? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        shopItemContainer = findViewById(R.id.shopItemContainer)
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        initViews()
         setupRecyclerView()
         setupViewModelObservers()
+    }
+
+    private fun initViews(){
         btnNewShopItem = findViewById(R.id.btnNewShopItem)
         btnNewShopItem.setOnClickListener {
-            val intent = ShopItemActivity.newIntentAddItem(this)
-            startActivity(intent)
+            if (!isOnePaneMode()){
+                val fragment = ShopItemFragment.newInstanceAddItem()
+                launchFragment(fragment)
+            } else {
+                val intent = ShopItemActivity.newIntentAddItem(this)
+                startActivity(intent)
+            }
         }
+    }
+
+    private fun isOnePaneMode(): Boolean{
+        return shopItemContainer == null
+    }
+
+    private fun launchFragment(fragment: Fragment){
+        supportFragmentManager.popBackStack()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.shopItemContainer, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun setupViewModelObservers() {
         viewModel.shopList.observe(this) {
             shopListAdapter.submitList(it)
+        }
+        viewModel.deletedShopItemId.observe(this){
+            if (it == viewModel.currentEditingShopItemId.value){
+                supportFragmentManager.popBackStack()
+            }
         }
     }
 
@@ -90,8 +116,14 @@ class MainActivity : AppCompatActivity() {
     private fun setupClickListener() {
         shopListAdapter.onShopItemClickListener = {
             Log.d(LOG_TAG, it.toString())
-            val intent = ShopItemActivity.newIntentEditItem(this, it.id)
-            startActivity(intent)
+            if (!isOnePaneMode()){
+                viewModel.startEditingShopItem(it)
+                val fragment = ShopItemFragment.newInstanceEditItem(it.id)
+                launchFragment(fragment)
+            } else {
+                val intent = ShopItemActivity.newIntentEditItem(this, it.id)
+                startActivity(intent)
+            }
         }
     }
 
@@ -99,5 +131,14 @@ class MainActivity : AppCompatActivity() {
         shopListAdapter.onShopItemLongClickListener = {
             viewModel.changeEnableState(it)
         }
+    }
+
+    override fun onEditingFinished() {
+        Toast.makeText(
+            this,
+            "Сохранено!",
+            Toast.LENGTH_SHORT
+        ).show()
+        supportFragmentManager.popBackStack()
     }
 }
