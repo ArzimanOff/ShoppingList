@@ -2,6 +2,7 @@ package com.arziman_off.shoppinglist.presentation
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
@@ -11,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.arziman_off.shoppinglist.R
 import com.google.android.material.button.MaterialButton
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
     companion object {
         const val LOG_TAG = "appNeedLogs"
     }
@@ -27,8 +28,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         shopItemContainer = findViewById(R.id.shopItemContainer)
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        initViews()
         setupRecyclerView()
         setupViewModelObservers()
+    }
+
+    private fun initViews(){
         btnNewShopItem = findViewById(R.id.btnNewShopItem)
         btnNewShopItem.setOnClickListener {
             if (!isOnePaneMode()){
@@ -56,6 +61,11 @@ class MainActivity : AppCompatActivity() {
     private fun setupViewModelObservers() {
         viewModel.shopList.observe(this) {
             shopListAdapter.submitList(it)
+        }
+        viewModel.deletedShopItemId.observe(this){
+            if (it == viewModel.currentEditingShopItemId.value){
+                supportFragmentManager.popBackStack()
+            }
         }
     }
 
@@ -107,6 +117,7 @@ class MainActivity : AppCompatActivity() {
         shopListAdapter.onShopItemClickListener = {
             Log.d(LOG_TAG, it.toString())
             if (!isOnePaneMode()){
+                viewModel.startEditingShopItem(it)
                 val fragment = ShopItemFragment.newInstanceEditItem(it.id)
                 launchFragment(fragment)
             } else {
@@ -120,5 +131,14 @@ class MainActivity : AppCompatActivity() {
         shopListAdapter.onShopItemLongClickListener = {
             viewModel.changeEnableState(it)
         }
+    }
+
+    override fun onEditingFinished() {
+        Toast.makeText(
+            this,
+            "Сохранено!",
+            Toast.LENGTH_SHORT
+        ).show()
+        supportFragmentManager.popBackStack()
     }
 }

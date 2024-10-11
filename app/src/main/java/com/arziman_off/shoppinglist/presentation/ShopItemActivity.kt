@@ -8,6 +8,7 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
@@ -18,7 +19,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import org.w3c.dom.Text
 
-class ShopItemActivity : AppCompatActivity() {
+class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
     private var screenMode: String = UNKNOWN_SCREEN_MODE
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
 
@@ -87,5 +88,9 @@ class ShopItemActivity : AppCompatActivity() {
             shopItemId = intent.getIntExtra(EXTRA_SHOP_ITEM_ID, ShopItem.UNDEFINED_ID)
             Log.d(LOG_TAG, "Item id: $shopItemId")
         }
+    }
+
+    override fun onEditingFinished() {
+        finish()
     }
 }

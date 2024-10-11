@@ -23,6 +23,7 @@ class ShopItemFragment : Fragment() {
 
     private lateinit var viewModel: ShopItemViewModel
 
+    private lateinit var onEditingFinishedListener: OnEditingFinishedListener
 
     private lateinit var btnSaveShopItem: MaterialButton
     private lateinit var btnDeleteItem: ImageButton
@@ -57,6 +58,15 @@ class ShopItemFragment : Fragment() {
                     putInt(SHOP_ITEM_ID, shopItemId)
                 }
             }
+        }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OnEditingFinishedListener){
+            onEditingFinishedListener = context
+        } else {
+            throw RuntimeException("Активити должно имплементировать интерфейс OnEditingFinishedListener")
         }
     }
 
@@ -212,7 +222,12 @@ class ShopItemFragment : Fragment() {
         }
 
         viewModel.closeScreen.observe(viewLifecycleOwner) {
-            activity?.onBackPressedDispatcher?.onBackPressed()
+            onEditingFinishedListener.onEditingFinished()
         }
+
+    }
+
+    interface OnEditingFinishedListener{
+        fun onEditingFinished()
     }
 }
