@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
+    id ("kotlin-kapt")
 }
 
 android {
@@ -33,9 +35,22 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    buildFeatures{
+        dataBinding = true
+    }
 }
 
 dependencies {
+
+    //ViewModel
+    implementation(libs.viewModel)
+//Room
+    implementation(libs.room)
+// Кодогенератор Room
+    ksp(libs.room.compiler)
+// optional - Kotlin Extensions and Coroutines support for Room
+    implementation(libs.room.ktx)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
