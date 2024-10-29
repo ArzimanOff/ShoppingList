@@ -65,6 +65,7 @@ class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished
         supportFragmentManager.popBackStack()
         supportFragmentManager.beginTransaction()
             .replace(R.id.shopItemContainer, fragment)
+            .addToBackStack(null)
             .commit()
     }
 
