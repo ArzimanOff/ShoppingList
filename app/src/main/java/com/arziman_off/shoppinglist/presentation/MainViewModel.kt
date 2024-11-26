@@ -1,17 +1,24 @@
 package com.arziman_off.shoppinglist.presentation
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.arziman_off.shoppinglist.data.ShopListRepositoryImpl
 import com.arziman_off.shoppinglist.domain.DeleteShopItemUseCase
 import com.arziman_off.shoppinglist.domain.EditShopItemUseCase
 import com.arziman_off.shoppinglist.domain.GetShopListUseCase
 import com.arziman_off.shoppinglist.domain.ShopItem
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
-class MainViewModel: ViewModel() {
+class MainViewModel(application: Application): AndroidViewModel(application) {
 
-    private val repository = ShopListRepositoryImpl
+    private val repository = ShopListRepositoryImpl(application)
 
     private val getShopListUseCase = GetShopListUseCase(repository)
     private val deleteShopItemUseCase = DeleteShopItemUseCase(repository)
@@ -28,8 +35,10 @@ class MainViewModel: ViewModel() {
     val shopList = getShopListUseCase.getShopList()
 
     fun deleteShopItem(shopItem: ShopItem){
-        _deletedShopItemId.value = shopItem.id
-        deleteShopItemUseCase.deleteShopItem(shopItem)
+        viewModelScope.launch {
+            _deletedShopItemId.value = shopItem.id
+            deleteShopItemUseCase.deleteShopItem(shopItem)
+        }
     }
 
     fun startEditingShopItem(shopItem: ShopItem){
@@ -37,8 +46,9 @@ class MainViewModel: ViewModel() {
     }
 
     fun changeEnableState(shopItem: ShopItem){
-        val newItem = shopItem.copy(enabled = !shopItem.enabled)
-        editShopItemUseCase.editShopItem(newItem)
+        viewModelScope.launch {
+            val newItem = shopItem.copy(enabled = !shopItem.enabled)
+            editShopItemUseCase.editShopItem(newItem)
+        }
     }
-
 }
