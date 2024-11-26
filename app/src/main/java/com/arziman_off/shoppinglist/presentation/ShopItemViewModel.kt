@@ -40,16 +40,16 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
     val closeScreen: LiveData<Unit>
         get() = _closeScreen
 
-    private val scope = CoroutineScope(Dispatchers.IO)
+    private val viewModelScope = CoroutineScope(Dispatchers.Main)
 
     fun getShopItem(shopItemId: Int) {
-        scope.launch {
+        viewModelScope.launch {
             _shopItemLD.value = getShopItemUseCase.getShopItem(shopItemId)
         }
     }
 
     fun addShopItem(inputName: String?, inputCount: String?) {
-        scope.launch {
+        viewModelScope.launch {
             val name = parseName(inputName)
             val count = parseCount(inputCount)
             val fieldsValid = validateInput(name, count)
@@ -63,7 +63,7 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
 
 
     fun editShopItem(inputName: String?, inputCount: String?) {
-        scope.launch {
+        viewModelScope.launch {
             val name = parseName(inputName)
             val count = parseCount(inputCount)
             val fieldsValid = validateInput(name, count)
@@ -78,7 +78,7 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun deleteShopItem(shopItem: ShopItem) {
-        scope.launch {
+        viewModelScope.launch {
             deleteShopItemUseCase.deleteShopItem(shopItem)
             finishWork()
         }
@@ -99,30 +99,25 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
     private fun validateInput(name: String, count: Int): Boolean {
         var res = true
         if (name.isBlank()) {
-            _errorInputName.postValue(true)
+            _errorInputName.value = true
             res = false
         }
         if (count <= 0) {
-            _errorInputCount.postValue(true)
+            _errorInputCount.value = true
             res = false
         }
         return res
     }
 
     fun resetErrorInputName() {
-        _errorInputName.postValue(false)
+        _errorInputName.value = false
     }
 
     fun resetErrorInputCount() {
-        _errorInputCount.postValue(false)
+        _errorInputCount.value = false
     }
 
     private fun finishWork() {
-        _closeScreen.postValue(Unit)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        scope.cancel()
+        _closeScreen.value = Unit
     }
 }
