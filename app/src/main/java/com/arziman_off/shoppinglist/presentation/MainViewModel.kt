@@ -10,6 +10,10 @@ import com.arziman_off.shoppinglist.domain.DeleteShopItemUseCase
 import com.arziman_off.shoppinglist.domain.EditShopItemUseCase
 import com.arziman_off.shoppinglist.domain.GetShopListUseCase
 import com.arziman_off.shoppinglist.domain.ShopItem
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application): AndroidViewModel(application) {
 
@@ -29,18 +33,29 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
 
     val shopList = getShopListUseCase.getShopList()
 
+    private val scope = CoroutineScope(Dispatchers.IO)
+
     fun deleteShopItem(shopItem: ShopItem){
-        _deletedShopItemId.value = shopItem.id
-        deleteShopItemUseCase.deleteShopItem(shopItem)
+        scope.launch {
+            _deletedShopItemId.postValue(shopItem.id)
+            deleteShopItemUseCase.deleteShopItem(shopItem)
+        }
     }
 
     fun startEditingShopItem(shopItem: ShopItem){
-        _currentEditingShopItemId.value = shopItem.id
+        _currentEditingShopItemId.postValue(shopItem.id)
     }
 
     fun changeEnableState(shopItem: ShopItem){
-        val newItem = shopItem.copy(enabled = !shopItem.enabled)
-        editShopItemUseCase.editShopItem(newItem)
+        scope.launch {
+            val newItem = shopItem.copy(enabled = !shopItem.enabled)
+            editShopItemUseCase.editShopItem(newItem)
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        scope.cancel()
     }
 
 }
